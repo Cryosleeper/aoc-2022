@@ -16,7 +16,17 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.size
+        val sums = mutableListOf<Int>()
+        var current = 0
+        for (value in input) {
+            if (value.isEmpty()) {
+                sums.add(current)
+                current = 0
+            } else {
+                current += value.toInt()
+            }
+        }
+        return sums.sortedDescending().subList(0, 3).sum()
     }
 
     // test if implementation meets criteria from the description, like:
