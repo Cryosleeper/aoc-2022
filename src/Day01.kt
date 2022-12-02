@@ -1,20 +1,18 @@
+import kotlin.math.max
+
 fun main() {
     fun part1(input: List<String>): Int {
         var max = 0
         var current = 0
         for (value in input) {
             if (value.isEmpty()) {
-                if (max < current) {
-                    max = current
-                }
+                max = max(max, current)
                 current = 0
             } else {
                 current += value.toInt()
             }
         }
-        if (max < current) {
-            max = current
-        }
+        max = max(max, current)
         return max
     }
 
