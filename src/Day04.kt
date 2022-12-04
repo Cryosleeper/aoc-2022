@@ -17,7 +17,7 @@ fun main() {
         return false
     }
 
-    fun IntRange.hasAnyOverlap(anotherRange: IntRange): Boolean {
+    fun IntRange.hasPartialOverlap(anotherRange: IntRange): Boolean {
         if (this.first <= anotherRange.first && this.last >= anotherRange.first) {
             return true
         }
@@ -28,6 +28,10 @@ fun main() {
             return true
         }
         return false
+    }
+
+    fun IntRange.hasAnyOverlap(anotherRange: IntRange): Boolean {
+        return hasFullOverlap(anotherRange) || hasPartialOverlap(anotherRange)
     }
 
     fun part1(input: List<String>): Int {
