@@ -4,6 +4,9 @@ fun main() {
         return first().toInt()..last().toInt()
     }
 
+    fun List<String>.prepareData(): List<List<IntRange>> =
+        map { line -> line.split(",").map { range -> range.split("-").toRange() } }
+
     fun IntRange.hasFullOverlap(anotherRange: IntRange): Boolean {
         if (this.first <= anotherRange.first && this.last >= anotherRange.last) {
             return true
@@ -28,25 +31,19 @@ fun main() {
     }
 
     fun part1(input: List<String>): Int {
-        var count = 0
-        for (line in input) {
-            val (first, second) = line.split(",").map { it.split("-").toRange() }
-            if (first.hasFullOverlap(second)) {
-                count++
+        return input
+            .prepareData()
+            .count {
+                it.first().hasFullOverlap(it.last())
             }
-        }
-        return count
     }
 
     fun part2(input: List<String>): Int {
-        var count = 0
-        for (line in input) {
-            val (first, second) = line.split(",").map { it.split("-").toRange() }
-            if (first.hasAnyOverlap(second)) {
-                count++
+        return input
+            .prepareData()
+            .count {
+                it.first().hasAnyOverlap(it.last())
             }
-        }
-        return count
     }
 
     // test if implementation meets criteria from the description, like:
