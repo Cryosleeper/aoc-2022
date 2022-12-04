@@ -11,7 +11,7 @@ fun main() {
         val misplacedItems = mutableListOf<Char>()
         for (line in input) {
             val left = line.substring(0, line.length/2).toHashSet()
-            val right = line.substring(line.length/2)
+            val right = line.substring(line.length/2).toHashSet()
 
             for (c in right) {
                 if (left.contains(c)) {
@@ -28,7 +28,7 @@ fun main() {
         for (group in input.chunked(3)) {
             val first = group[0].toHashSet()
             val second = group[1].toHashSet()
-            val third = group[2]
+            val third = group[2].toHashSet()
             for (item in third) {
                 if (first.contains(item) && second.contains(item)) {
                     badges.add(item)
