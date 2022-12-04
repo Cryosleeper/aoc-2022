@@ -18,13 +18,10 @@ fun main() {
     }
 
     fun IntRange.hasPartialOverlap(anotherRange: IntRange): Boolean {
-        if (this.first <= anotherRange.first && this.last >= anotherRange.first) {
+        if (anotherRange.first in this) {
             return true
         }
-        if (this.first <= anotherRange.last && this.last >= anotherRange.last) {
-            return true
-        }
-        if (hasFullOverlap(anotherRange)) {
+        if (anotherRange.last in this) {
             return true
         }
         return false
