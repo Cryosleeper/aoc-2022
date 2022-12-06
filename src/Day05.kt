@@ -20,10 +20,10 @@ fun main() {
         val buffer = LinkedList<Char>()
 
         for (move in moves) {
-            for (x in 0 until move.number) {
+            (0 until move.number).forEach { _ ->
                 buffer.addFirst(stacks[move.from].pop())
             }
-            for (x in 0 until move.number) {
+            (0 until move.number).forEach { _ ->
                 stacks[move.to].addFirst(buffer.pop())
             }
         }
