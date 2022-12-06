@@ -41,7 +41,7 @@ fun main() {
     println(part2(input))
 }
 
-data class Move (val from: Int, val to: Int, val number: Int)
+data class Move(val from: Int, val to: Int, val number: Int)
 
 fun List<String>.parseInput(): Pair<List<Deque<Char>>, List<Move>> {
     val inputDividerIndex = indexOf("")
@@ -58,7 +58,13 @@ private fun List<String>.toMoves(): List<Move> {
     val regex = "\\d+".toRegex()
     for (line in this) {
         regex.findAll(line).toList().apply {
-            result.add(Move(this[1].value.toInt() - 1, this[2].value.toInt() - 1, this[0].value.toInt()))
+            result.add(
+                Move(
+                    from = this[1].value.toInt() - 1,
+                    to = this[2].value.toInt() - 1,
+                    number = this[0].value.toInt()
+                )
+            )
         }
     }
     return result
@@ -66,7 +72,7 @@ private fun List<String>.toMoves(): List<Move> {
 
 private fun List<String>.toQueues(): List<Deque<Char>> {
     val input = reversed()
-    val stackNumber = (input[0].length + 2) / 4
+    val stackNumber = "\\d+".toRegex().findAll(input[0]).count()
     val stacks = (0 until stackNumber).map { LinkedList<Char>() }
     val regex = "[A-Z]+".toRegex()
     for (line in input.subList(1, input.size)) {
