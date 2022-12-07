@@ -3,14 +3,12 @@ fun main() {
         val buffer = HashSet<Char>()
         var result = -1
         run breaking@{
-            input.forEachIndexed { index, _ ->
-                if (index >= groupSize - 1) {
-                    buffer.clear()
-                    input.substring(index - groupSize + 1, index + 1).forEach { buffer.add(it) }
-                    if (buffer.size == groupSize) {
-                        result = index + 1
-                        return@breaking
-                    }
+            (groupSize-1 until input.length).forEach { index ->
+                buffer.clear()
+                (index - groupSize + 1..index).forEach { buffer.add(input[it]) }
+                if (buffer.size == groupSize) {
+                    result = index + 1
+                    return@breaking
                 }
             }
         }
