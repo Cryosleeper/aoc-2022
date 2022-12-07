@@ -6,7 +6,7 @@ fun main() {
             input.forEachIndexed { index, _ ->
                 if (index >= groupSize - 1) {
                     buffer.clear()
-                    buffer.addAll(input.substring(index - groupSize + 1, index + 1).toList())
+                    input.substring(index - groupSize + 1, index + 1).forEach { buffer.add(it) }
                     if (buffer.size == groupSize) {
                         result = index + 1
                         return@breaking
