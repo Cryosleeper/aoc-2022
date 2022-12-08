@@ -1,3 +1,5 @@
+import kotlin.math.min
+
 fun main() {
     fun part1(input: List<String>): Int {
         val root = input.parse()
@@ -6,17 +8,33 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        TODO()
+        val root = input.parse()
+        val spaceToFree = 30000000 - (70000000 - root.size)
+        if (spaceToFree <= 0) return 0
+        return root.smallestFolderBiggerThan(spaceToFree)
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day07_test")
     check(part1(testInput) == 95437)
-    //check(part2(testInput) == 0)
+    check(part2(testInput) == 24933642)
 
     val input = readInput("Day07")
     println(part1(input))
-    //println(part2(input))
+    println(part2(input))
+}
+
+private fun Folder.smallestFolderBiggerThan(spaceToFree: Int): Int {
+    var result = Int.MAX_VALUE
+    this.children.forEach {
+        if (it is Folder) {
+            if (it.size >= spaceToFree) {
+                result = min(result, it.size)
+                result = min(result, it.smallestFolderBiggerThan(spaceToFree))
+            }
+        }
+    }
+    return result
 }
 
 private fun Folder.sumOfFoldersUnder100000(): Int {
@@ -62,7 +80,7 @@ private fun List<String>.parse(): Folder {
     return root
 }
 
-abstract class Entry {
+private abstract class Entry {
     abstract val name: String
     abstract val parent: Folder?
     abstract val size: Int
@@ -84,9 +102,9 @@ abstract class Entry {
     }
 }
 
-class Folder(override val name: String, override val parent: Folder?, val children: MutableList<Entry>): Entry() {
+private class Folder(override val name: String, override val parent: Folder?, val children: MutableList<Entry>): Entry() {
     override val size: Int
         get() = children.sumOf { it.size }
 }
 
-class File(override val name: String, override val parent: Folder?, override val size: Int): Entry()
+private class File(override val name: String, override val parent: Folder?, override val size: Int): Entry()
