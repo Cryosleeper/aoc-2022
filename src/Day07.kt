@@ -1,5 +1,8 @@
 import kotlin.math.min
 
+private const val DISK_SIZE = 70000000
+private const val UPDATE_SPACE_REQUIREMENT = 30000000
+
 fun main() {
     fun part1(input: List<String>): Int {
         val root = input.parse()
@@ -9,7 +12,7 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val root = input.parse()
-        val spaceToFree = 30000000 - (70000000 - root.size)
+        val spaceToFree = UPDATE_SPACE_REQUIREMENT - (DISK_SIZE - root.size)
         if (spaceToFree <= 0) return 0
         return root.smallestFolderBiggerThan(spaceToFree)
     }
@@ -52,28 +55,27 @@ private fun Folder.sumOfFoldersUnder100000(): Int {
 
 private fun List<String>.parse(): Folder {
     val root = Folder("/", null, mutableListOf())
-    var currentEntity = root
+    var currentFolder = root
 
     this.forEach { line ->
         if (line.startsWith("$ cd")) {
-            currentEntity = when (line.replace("$ cd ", "")) {
+            currentFolder = when (line.replace("$ cd ", "")) {
                 "/" -> root
-                ".." -> currentEntity.parent!!
+                ".." -> currentFolder.parent!!
                 else -> {
-                    currentEntity.children.find { it.name == line.replace("$ cd ", "") } as Folder
+                    currentFolder.children.find { it.name == line.replace("$ cd ", "") } as Folder
                 }
             }
         } else if (line.startsWith("$ ls")) {
-            //prepare to update currentEntity
+            //not useful for anything
         } else {
-            if (line.startsWith("dir")) {
-                val folder = Folder(line.replace("dir ", ""), currentEntity, mutableListOf())
-                currentEntity.children.add(folder)
+            val (prefix, name) = line.split(" ")
+            val entity = if (prefix == "dir") {
+                Folder(name, currentFolder, mutableListOf())
             } else {
-                val (size, name) = line.split(" ")
-                val file = File(name, currentEntity, size.toInt())
-                currentEntity.children.add(file)
+                File(name, currentFolder, prefix.toInt())
             }
+            currentFolder.children.add(entity)
         }
     }
 
