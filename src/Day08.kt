@@ -49,19 +49,19 @@ private fun countScenic(input: List<List<Int>>): Int {
 
     input.forEachIndexed { lineIndex, line ->
         line.forEachIndexed { columnIndex, tree ->
-            val left = input[lineIndex].subList(0, columnIndex).asReversed()
-            val leftCount = viewDistance(left.distanceToFirstAsHigh(tree), left.size)
+            val toLeft = input[lineIndex].subList(0, columnIndex).asReversed()
+            val leftViewDistance = viewDistance(toLeft.distanceToFirstAsHigh(tree), toLeft.size)
 
-            val right = input[lineIndex].subList(columnIndex+1, input[lineIndex].size)
-            val rightCount = viewDistance(right.distanceToFirstAsHigh(tree), right.size)
+            val toRight = input[lineIndex].subList(columnIndex+1, input[lineIndex].size)
+            val rightViewDistance = viewDistance(toRight.distanceToFirstAsHigh(tree), toRight.size)
 
-            val top = input.subList(0, lineIndex).asReversed().map { it[columnIndex] }
-            val topCount = viewDistance(top.distanceToFirstAsHigh(tree), top.size)
+            val toTop = input.subList(0, lineIndex).asReversed().map { it[columnIndex] }
+            val topViewDistance = viewDistance(toTop.distanceToFirstAsHigh(tree), toTop.size)
 
-            val bottom = input.subList(lineIndex+1, input.size).map { it[columnIndex] }
-            val bottomCount = viewDistance(bottom.distanceToFirstAsHigh(tree), bottom.size)
+            val toBottom = input.subList(lineIndex+1, input.size).map { it[columnIndex] }
+            val bottomViewDistance = viewDistance(toBottom.distanceToFirstAsHigh(tree), toBottom.size)
 
-            maxScenic = max(maxScenic, leftCount * rightCount * topCount * bottomCount)
+            maxScenic = max(maxScenic, leftViewDistance * rightViewDistance * topViewDistance * bottomViewDistance)
         }
     }
 
