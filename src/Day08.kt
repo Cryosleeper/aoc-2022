@@ -41,22 +41,25 @@ private fun countTrees(input: List<List<Int>>): Int {
 
 private fun countScenic(input: List<List<Int>>): Int {
 
-    fun minNonZero(a: Int, b: Int): Int {
-        return if (a == 0) b else if (b == 0) a else min(a, b)
-    }
+    fun viewDistance(lowerTrees: Int, distanceToEdge: Int) = if (lowerTrees == 0) distanceToEdge else min(lowerTrees, distanceToEdge)
+
+    fun List<Int>.distanceToFirstAsHigh(height: Int) = indexOfFirst { it >= height } + 1
 
     var maxScenic = 0
 
     input.forEachIndexed { lineIndex, line ->
         line.forEachIndexed { columnIndex, tree ->
             val left = input[lineIndex].subList(0, columnIndex).asReversed()
-            val leftCount = minNonZero(left.indexOfFirst { it >= tree } + 1, left.size)
+            val leftCount = viewDistance(left.distanceToFirstAsHigh(tree), left.size)
+
             val right = input[lineIndex].subList(columnIndex+1, input[lineIndex].size)
-            val rightCount = minNonZero(right.indexOfFirst { it >= tree } + 1, right.size)
+            val rightCount = viewDistance(right.distanceToFirstAsHigh(tree), right.size)
+
             val top = input.subList(0, lineIndex).asReversed().map { it[columnIndex] }
-            val topCount = minNonZero(top.indexOfFirst { it >= tree } + 1, top.size)
+            val topCount = viewDistance(top.distanceToFirstAsHigh(tree), top.size)
+
             val bottom = input.subList(lineIndex+1, input.size).map { it[columnIndex] }
-            val bottomCount = minNonZero(bottom.indexOfFirst { it >= tree } + 1, bottom.size)
+            val bottomCount = viewDistance(bottom.distanceToFirstAsHigh(tree), bottom.size)
 
             maxScenic = max(maxScenic, leftCount * rightCount * topCount * bottomCount)
         }
