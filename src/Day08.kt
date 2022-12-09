@@ -21,16 +21,16 @@ fun main() {
 private fun List<String>.toMatrix(): List<List<Int>> = this.map { it.toList().map { it.digitToInt() } }
 
 private fun countTrees(input: List<List<Int>>): Int {
-    val visible = input.map { it.map { false }.toMutableList() }.toMutableList()
+    var result = 0
 
     input.forEachIndexed { lineIndex, line ->
         line.forEachIndexed { columnIndex, tree ->
-            if (input[lineIndex].subList(0, columnIndex+1).filter { it >= tree }.size == 1) visible[lineIndex][columnIndex] = true
-            else if (input[lineIndex].subList(columnIndex, input[lineIndex].size).filter { it >= tree }.size == 1) visible[lineIndex][columnIndex] = true
-            else if (input.subList(0, lineIndex+1).map { it[columnIndex] }.filter { it >= tree }.size == 1) visible[lineIndex][columnIndex] = true
-            else if (input.subList(lineIndex, input.size).map { it[columnIndex] }.filter { it >= tree }.size == 1) visible[lineIndex][columnIndex] = true
+            if (input[lineIndex].subList(0, columnIndex+1).filter { it >= tree }.size == 1) result++
+            else if (input[lineIndex].subList(columnIndex, input[lineIndex].size).filter { it >= tree }.size == 1) result++
+            else if (input.subList(0, lineIndex+1).map { it[columnIndex] }.filter { it >= tree }.size == 1) result++
+            else if (input.subList(lineIndex, input.size).map { it[columnIndex] }.filter { it >= tree }.size == 1) result++
         }
     }
 
-    return visible.sumOf { it.count { it } }
+    return result
 }
