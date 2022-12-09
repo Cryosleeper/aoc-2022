@@ -3,12 +3,12 @@ import kotlin.math.min
 
 fun main() {
     fun part1(input: List<String>): Int {
-        val numbers = input.toMatrix()
+        val numbers = input.toIntMatrix()
         return countTrees(numbers)
     }
 
     fun part2(input: List<String>): Int {
-        val numbers = input.toMatrix()
+        val numbers = input.toIntMatrix()
         return countScenic(numbers)
     }
 
@@ -22,7 +22,7 @@ fun main() {
     println(part2(input))
 }
 
-private fun List<String>.toMatrix(): List<List<Int>> = this.map { it.toList().map { it.digitToInt() } }
+private fun List<String>.toIntMatrix(): List<List<Int>> = this.map { line -> line.toList().map { tree -> tree.digitToInt() } }
 
 private fun countTrees(input: List<List<Int>>): Int {
     var result = 0
