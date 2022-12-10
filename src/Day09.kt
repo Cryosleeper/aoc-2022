@@ -4,8 +4,8 @@ fun main() {
     fun part1(input: List<String>): Int {
         val steps = input.toSteps()
         val visitedPlaces = mutableSetOf<Position>()
-        val head = Position(10000, 10000)
-        val tail = Position(10000, 10000)
+        val head = Position(0, 0)
+        val tail = Position(0, 0)
         steps.forEach { step ->
             when (step) {
                 Step.UP -> head.y--
@@ -82,19 +82,14 @@ private data class Position(var x: Int, var y: Int) {
 
     fun moveTowards(position: Position) {
         if (rangeTo(position) > 2) {
-            if (x > position.x && y > position.y) {
+            if (x > position.x)
                 x--
-                y--
-            } else if (x > position.x && y < position.y) {
-                x--
-                y++
-            } else if (x < position.x && y > position.y) {
+            else if (x < position.x)
                 x++
+            if (y > position.y)
                 y--
-            } else if (x < position.x && y < position.y) {
-                x++
+            else if (y < position.y)
                 y++
-            }
         } else if (x - position.x == 2) {
             x--
         } else if (x - position.x == -2) {
