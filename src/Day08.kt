@@ -41,7 +41,7 @@ private fun countTrees(input: List<List<Int>>): Int {
 
 private fun countScenic(input: List<List<Int>>): Int {
 
-    fun viewDistance(lowerTrees: Int, distanceToEdge: Int) = if (lowerTrees == 0) distanceToEdge else min(lowerTrees, distanceToEdge)
+    fun viewDistance(distanceToHighTree: Int, distanceToEdge: Int) = if (distanceToHighTree == 0) distanceToEdge else min(distanceToHighTree, distanceToEdge)
 
     fun List<Int>.distanceToFirstAsHigh(height: Int) = indexOfFirst { it >= height } + 1
 
