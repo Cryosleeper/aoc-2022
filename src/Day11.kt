@@ -48,7 +48,7 @@ private class Monkey(input: List<String>, unworry: Boolean = true) {
     init {
         id = "\\d+".toRegex().find(input[0])!!.value
         items = "\\d+".toRegex().findAll(input[1])
-            .mapIndexed { index, matchResult -> Item("$id $index", matchResult.value.toLong()) }.toMutableList()
+            .mapIndexed { index, matchResult -> Item("$id $index", matchResult.value.toInt()) }.toMutableList()
 
         val (first, second, operator) = readWorryModifiers(input[2])
 
@@ -56,26 +56,25 @@ private class Monkey(input: List<String>, unworry: Boolean = true) {
         val trueMonkey = "\\d+".toRegex().find(input[4])!!.value
         val falseMonkey = "\\d+".toRegex().find(input[5])!!.value
         strategy = {
-            if (it.worryLevel % divider == 0L) trueMonkey else falseMonkey
+            if (it.worryLevel % divider == 0) trueMonkey else falseMonkey
         }
 
         worryModifier = if (unworry) {
             WorryModifierUnworried(first, second, operator)
         } else {
-            WorryModifierVeryWorried.divider *= divider
-            WorryModifierVeryWorried(first, second, operator)
+            WorryModifierVeryWorried(first, second, operator, divider)
         }
     }
 
-    private fun readWorryModifiers(input: String): Triple<Long?, Long?, WorryOperator> {
+    private fun readWorryModifiers(input: String): Triple<Int?, Int?, WorryOperator> {
         val worryModifications = input.substring(input.indexOf("=") + 2).split(" ")
-        val first: Long? = when (worryModifications[0]) {
+        val first: Int? = when (worryModifications[0]) {
             "old" -> null
-            else -> worryModifications[0].toLong()
+            else -> worryModifications[0].toInt()
         }
-        val second: Long? = when (worryModifications[2]) {
+        val second: Int? = when (worryModifications[2]) {
             "old" -> null
-            else -> worryModifications[2].toLong()
+            else -> worryModifications[2].toInt()
         }
         val operator = WorryOperator.from(worryModifications[1])
         return Triple(first, second, operator)
@@ -103,26 +102,32 @@ private class Monkey(input: List<String>, unworry: Boolean = true) {
 }
 
 private interface WorryModifier {
-    fun modify(currentWorry: Long): Long
+    fun modify(currentWorry: Int): Int
 }
 
 private class WorryModifierUnworried(
-    private val first: Long?,
-    private val second: Long?,
+    private val first: Int?,
+    private val second: Int?,
     private val operator: WorryOperator
 ) : WorryModifier {
-    override fun modify(currentWorry: Long): Long {
-        return (operator.perform(first ?: currentWorry, second ?: currentWorry)) / 3L
+    override fun modify(currentWorry: Int): Int {
+        return ((operator.perform(first ?: currentWorry, second ?: currentWorry)) / 3).toInt()
     }
 }
 
 private class WorryModifierVeryWorried(
-    private val first: Long?,
-    private val second: Long?,
-    private val operator: WorryOperator
+    private val first: Int?,
+    private val second: Int?,
+    private val operator: WorryOperator,
+    divider: Int
 ) : WorryModifier {
-    override fun modify(currentWorry: Long): Long {
-        return (operator.perform(first ?: currentWorry, second ?: currentWorry)) % divider
+
+    init {
+        WorryModifierVeryWorried.divider *= divider
+    }
+
+    override fun modify(currentWorry: Int): Int {
+        return ((operator.perform(first ?: currentWorry, second ?: currentWorry)) % divider).toInt()
     }
 
     companion object {
@@ -132,13 +137,13 @@ private class WorryModifierVeryWorried(
 
 private enum class WorryOperator {
     Add {
-        override fun perform(first: Long, second: Long) = first + second
+        override fun perform(first: Int, second: Int) = first.toLong() + second.toLong()
     },
     Multiply {
-        override fun perform(first: Long, second: Long) = first * second
+        override fun perform(first: Int, second: Int) = first.toLong() * second.toLong()
     };
 
-    abstract fun perform(first: Long, second: Long): Long
+    abstract fun perform(first: Int, second: Int): Long
 
     companion object {
         fun from(value: String) = when (value) {
@@ -149,4 +154,4 @@ private enum class WorryOperator {
     }
 }
 
-private data class Item(val id: String, var worryLevel: Long)
+private data class Item(val id: String, var worryLevel: Int)
