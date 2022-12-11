@@ -1,5 +1,7 @@
 import kotlin.math.abs
 
+private const val SCREEN_WIDTH = 40
+
 fun main() {
     fun part1(input: List<String>): Int {
         var registerX = 1
@@ -33,19 +35,19 @@ fun main() {
         var registerX = 1
         var currentCycle = 0
         input.forEach { line ->
-            output += if (abs(currentCycle%40 - registerX) < 2) "#" else "."
+            output += getPixel(currentCycle, registerX)
             val command = line.split(" ")
             when (command[0]) {
                 "noop" -> currentCycle++
                 "addx" -> {
                     currentCycle += 1
-                    output += if (abs(currentCycle%40 - registerX) < 2) "#" else "."
+                    output += getPixel(currentCycle, registerX)
                     currentCycle += 1
                     registerX += command[1].toInt()
                 }
             }
         }
-        return output.toList().chunked(40).joinToString("\n") { it.joinToString("") }
+        return output.drawOnScreen()
     }
 
     // test if implementation meets criteria from the description, like:
@@ -72,3 +74,7 @@ private fun MutableMap<Int, Int?>.performCheck(currentCycle: Int, registerX: Int
         }
     }
 }
+
+private fun getPixel(pixel:Int, signal: Int) = if (abs(pixel%SCREEN_WIDTH - signal) < 2) "#" else "."
+
+private fun String.drawOnScreen() = toList().chunked(SCREEN_WIDTH).joinToString("\n") { it.joinToString("") }
