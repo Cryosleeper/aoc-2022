@@ -12,7 +12,7 @@ fun main() {
     }
 
     fun part2(input: List<String>): Long {
-        WorryModifierVeryWorried.divider = 1
+        WorryModifierVeryWorried.reset()
         val monkeys: Map<String, Monkey> = input.chunked(7) {
             val monkey = Monkey(it, false)
             monkey.id to monkey
@@ -131,7 +131,11 @@ private class WorryModifierVeryWorried(
     }
 
     companion object {
-        var divider: Long = 1
+        fun reset() {
+            divider = 1
+        }
+
+        private var divider: Long = 1
     }
 }
 
