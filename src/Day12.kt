@@ -1,3 +1,7 @@
+private val ROUND_COLOR = "\u001B[34m"
+private val HEIGHT_COLOR = "\u001B[31m"
+private val COLOR_BREAK = "\u001B[0m"
+
 fun main() {
     fun part1(input: List<String>): Int {
         val (start, end, heightMap) = input.parse()
@@ -14,8 +18,8 @@ fun main() {
 
         var min = visited.at(start)
 
-        heightMap.indices.forEach {row ->
-            heightMap[0].indices.forEach {column ->
+        heightMap.indices.forEach { row ->
+            heightMap[0].indices.forEach { column ->
                 if (heightMap.at(row to column) == 0) {
                     if (visited.at(row to column) in 1..min) {
                         min = visited.at(row to column)
@@ -44,19 +48,70 @@ private fun List<String>.parse(): Triple<Pair<Int, Int>, Pair<Int, Int>, List<Li
     }
     var start: Pair<Int, Int> = 0 to 0
     var end: Pair<Int, Int> = 0 to 0
-    val map = inputToParse.mapIndexed { rowIndex, row -> row.toList().mapIndexed { columnIndex, char ->
-        if (char == 'S') {
-            start = rowIndex to columnIndex
-            0
-        } else if (char == 'E') {
-            end = rowIndex to columnIndex
-            'z'- 'a'
-        } else {
-            char - 'a'
+    val map = inputToParse.mapIndexed { rowIndex, row ->
+        row.toList().mapIndexed { columnIndex, char ->
+            if (char == 'S') {
+                start = rowIndex to columnIndex
+                0
+            } else if (char == 'E') {
+                end = rowIndex to columnIndex
+                'z' - 'a'
+            } else {
+                char - 'a'
+            }
         }
-    } }
+    }
+
+    map.map { it.map { "${it.toColor()}*$COLOR_BREAK" } }.forEach { println(it.joinToString("")) }
 
     return Triple(start, end, map)
+}
+
+private fun Int.toColor(): String {
+    if (this < 0) {
+        return ""
+    }
+    return listOf<String>(
+        "\u001b[38;5;27m",
+        "\u001b[38;5;26m",
+        "\u001b[38;5;25m",
+        "\u001b[38;5;24m",
+        "\u001b[38;5;28m",
+        "\u001b[38;5;64m",
+        "\u001b[38;5;100m",
+        "\u001b[38;5;136m",
+        "\u001b[38;5;172m",
+        "\u001b[38;5;208m",
+        "\u001b[38;5;220m"
+    )[this/3]
+    /*return listOf<String>(
+        "\u001b[38;5;28m",
+        "\u001b[38;5;232m",
+        "\u001b[38;5;233m",
+        "\u001b[38;5;234m",
+        "\u001b[38;5;235m",
+        "\u001b[38;5;236m",
+        "\u001b[38;5;237m",
+        "\u001b[38;5;238m",
+        "\u001b[38;5;239m",
+        "\u001b[38;5;240m",
+        "\u001b[38;5;241m",
+        "\u001b[38;5;242m",
+        "\u001b[38;5;243m",
+        "\u001b[38;5;244m",
+        "\u001b[38;5;245m",
+        "\u001b[38;5;246m",
+        "\u001b[38;5;247m",
+        "\u001b[38;5;248m",
+        "\u001b[38;5;249m",
+        "\u001b[38;5;250m",
+        "\u001b[38;5;251m",
+        "\u001b[38;5;252m",
+        "\u001b[38;5;253m",
+        "\u001b[38;5;254m",
+        "\u001b[38;5;255m",
+        "\u001b[38;5;220m"
+    )[this]*/
 }
 
 private fun List<List<Int>>.at(position: Pair<Int, Int>) = this[position.first][position.second]
@@ -105,18 +160,14 @@ fun calculatePath(
         round++
 
         if (placesToCheck.size == 0 && visited.at(start) < 0) {
-            //heightMap.map { it.map { if (it >= 0) it/3 else "+" } }.forEach { println(it.joinToString("")) }
-            val roundColor = "\u001B[34m"
-            val heightColor = "\u001B[31m"
-            val colorBreak = "\u001B[0m"
             visited.mapIndexed { row, line ->
                 line.mapIndexed { column, place ->
                     String.format(
-                        "[$roundColor%3d$colorBreak - $heightColor${
+                        "[$ROUND_COLOR%3d$COLOR_BREAK - $HEIGHT_COLOR${
                             'a' + heightMap.at(
                                 row to column
                             )
-                        }$colorBreak]", place
+                        }$COLOR_BREAK]", place
                     )
                 }
             }.forEach { println(it.joinToString("")) }
