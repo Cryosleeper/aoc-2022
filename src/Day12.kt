@@ -1,55 +1,40 @@
 fun main() {
     fun part1(input: List<String>): Int {
         val (start, end, heightMap) = input.parse()
-        val visited: MutableList<MutableList<Int>> = heightMap.indices.map {
-            heightMap[0].indices.map { -1 }.toMutableList()
-        }.toMutableList()
 
-        visited.setAt(end, 0)
-
-        var round = 1
-        val placesToCheck = mutableListOf(end)
-        val placesToCheckNextRound = mutableListOf<Pair<Int, Int>>()
-        while (visited.at(start) < 0) {
-            println("Places to check this round: $placesToCheck")
-            placesToCheck.forEach { place ->
-                listOf(place.toLeft, place.toRight, place.above, place.below).forEach { potentialPlace ->
-                    if (visited.at(potentialPlace) <0 && (heightMap.at(place)- heightMap.at(potentialPlace)) <= 1) {
-                        visited.setAt(potentialPlace, round)
-                        placesToCheckNextRound.add(potentialPlace)
-                    }
-                }
-            }
-            placesToCheck.clear()
-            placesToCheck.addAll(placesToCheckNextRound)
-            placesToCheckNextRound.clear()
-            round++
-
-            if (placesToCheck.size == 0 && visited.at(start) < 0) {
-                //heightMap.map { it.map { if (it >= 0) it/3 else "+" } }.forEach { println(it.joinToString("")) }
-                val roundColor = "\u001B[34m"
-                val heightColor = "\u001B[31m"
-                val colorBreak = "\u001B[0m"
-                visited.mapIndexed { row, line -> line.mapIndexed { column, place -> String.format("[$roundColor%3d$colorBreak - $heightColor${'a'+heightMap.at(row to column)}$colorBreak]", place) } }.forEach { println(it.joinToString("")) }
-                throw Exception("No path found")
-            }
-        }
+        val visited = calculatePath(end, start, heightMap)
 
         return visited.at(start)
     }
 
     fun part2(input: List<String>): Int {
-        TODO()
+        val (start, end, heightMap) = input.parse()
+
+        val visited = calculatePath(end, start, heightMap)
+
+        var min = visited.at(start)
+
+        heightMap.indices.forEach {row ->
+            heightMap[0].indices.forEach {column ->
+                if (heightMap.at(row to column) == 0) {
+                    if (visited.at(row to column) in 1..min) {
+                        min = visited.at(row to column)
+                    }
+                }
+            }
+        }
+
+        return min
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day12_test")
     check(part1(testInput) == 31)
-    //check(part2(testInput) == 0)
+    check(part2(testInput) == 29)
 
     val input = readInput("Day12")
     println(part1(input))
-    //println(part2(input))
+    println(part2(input))
 }
 
 private fun List<String>.parse(): Triple<Pair<Int, Int>, Pair<Int, Int>, List<List<Int>>> {
@@ -89,3 +74,55 @@ private val Pair<Int, Int>.above: Pair<Int, Int>
 
 private val Pair<Int, Int>.below: Pair<Int, Int>
     get() = first + 1 to second
+
+fun calculatePath(
+    end: Pair<Int, Int>,
+    start: Pair<Int, Int>,
+    heightMap: List<List<Int>>
+): List<List<Int>> {
+    val visited: MutableList<MutableList<Int>> = heightMap.indices.map {
+        heightMap[0].indices.map { -1 }.toMutableList()
+    }.toMutableList()
+
+    visited.setAt(end, 0)
+
+    var round = 1
+    val placesToCheck = mutableListOf(end)
+    val placesToCheckNextRound = mutableListOf<Pair<Int, Int>>()
+    while (visited.at(start) < 0) {
+        println("Places to check this round: $placesToCheck")
+        placesToCheck.forEach { place ->
+            listOf(place.toLeft, place.toRight, place.above, place.below).forEach { potentialPlace ->
+                if (visited.at(potentialPlace) < 0 && (heightMap.at(place) - heightMap.at(potentialPlace)) <= 1) {
+                    visited.setAt(potentialPlace, round)
+                    placesToCheckNextRound.add(potentialPlace)
+                }
+            }
+        }
+        placesToCheck.clear()
+        placesToCheck.addAll(placesToCheckNextRound)
+        placesToCheckNextRound.clear()
+        round++
+
+        if (placesToCheck.size == 0 && visited.at(start) < 0) {
+            //heightMap.map { it.map { if (it >= 0) it/3 else "+" } }.forEach { println(it.joinToString("")) }
+            val roundColor = "\u001B[34m"
+            val heightColor = "\u001B[31m"
+            val colorBreak = "\u001B[0m"
+            visited.mapIndexed { row, line ->
+                line.mapIndexed { column, place ->
+                    String.format(
+                        "[$roundColor%3d$colorBreak - $heightColor${
+                            'a' + heightMap.at(
+                                row to column
+                            )
+                        }$colorBreak]", place
+                    )
+                }
+            }.forEach { println(it.joinToString("")) }
+            throw Exception("No path found")
+        }
+    }
+
+    return visited
+}
