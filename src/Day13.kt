@@ -12,12 +12,12 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        val parsed = input.filter { it.isNotEmpty() }.map { it.replace("10", ":").toMutableList() }.toMutableList()
-        parsed.add("[[2]]".toMutableList())
-        parsed.add("[[6]]".toMutableList())
+        val parsed = input.filter { it.isNotEmpty() }.toMutableList()
+        parsed.add("[[2]]")
+        parsed.add("[[6]]")
         val sorted = parsed.sortedWith { o1, o2 -> if (comparePair(o1 to o2)) -1 else 1 }
-        println("Sorted list is ${sorted.map { it.joinToString("", postfix = "\n") }}")
-        return (sorted.indexOf("[[2]]".toList())+1) * (sorted.indexOf("[[6]]".toList())+1)
+        println("Sorted list is ${sorted.joinToString("\n")}")
+        return (sorted.indexOf("[[2]]")+1) * (sorted.indexOf("[[6]]")+1)
     }
 
     // test if implementation meets criteria from the description, like:
@@ -30,10 +30,10 @@ fun main() {
     println(part2(input))
 }
 
-private fun List<String>.parse(): List<Pair<MutableList<Char>, MutableList<Char>>> {
-    val result = mutableListOf<Pair<MutableList<Char>, MutableList<Char>>>()
+private fun List<String>.parse(): List<Pair<String, String>> {
+    val result = mutableListOf<Pair<String, String>>()
     this.chunked(3) {
-        result.add(it[0].replace("10", ":").toMutableList() to it[1].replace("10",":").toMutableList())
+        result.add(it[0] to it[1])
     }
     return result
 }
@@ -41,13 +41,13 @@ private fun List<String>.parse(): List<Pair<MutableList<Char>, MutableList<Char>
 private fun Char.isElevenBasedDigit() = this-'0' in 0..10
 
 fun comparePair(
-    pair: Pair<MutableList<Char>, MutableList<Char>>
+    pair: Pair<String, String>
 ): Boolean {
     var result = false
-    println("Pair ${pair.first.joinToString("")} - \n     ${pair.second.joinToString("")}")
+    println("Pair ${pair.first} - \n     ${pair.second}")
     run pair@{
-        val firstCode = mutableListOf<Char>().apply { addAll(pair.first) }
-        val secondCode = mutableListOf<Char>().apply { addAll(pair.second) }
+        val firstCode = mutableListOf<Char>().apply { addAll(pair.first.replace("10",":").toList()) }
+        val secondCode = mutableListOf<Char>().apply { addAll(pair.second.replace("10",":").toList()) }
         (0 until max(firstCode.size, secondCode.size)).forEach { index ->
             print("\tPosition $index: ${firstCode[index]}-${secondCode[index]}:")
             if (firstCode[index] == '[' && secondCode[index] == '[') {
