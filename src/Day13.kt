@@ -16,7 +16,7 @@ fun main() {
         parsed.add("[[2]]")
         parsed.add("[[6]]")
         val sorted = parsed.sortedWith { o1, o2 -> if (o1 precedes o2) -1 else 1 }
-        println("Sorted list is ${sorted.joinToString("\n")}")
+        println("Sorted list is: \n${sorted.joinToString("\n")}")
         return (sorted.indexOf("[[2]]")+1) * (sorted.indexOf("[[6]]")+1)
     }
 
@@ -43,6 +43,9 @@ private fun Char.isElevenBasedDigit() = this-'0' in 0..10
 private infix fun String.precedes(
     that: String
 ): Boolean {
+
+    fun MutableList<Char>.toStringFormat() = joinToString("").replace(":","10")
+
     var result = false
     println("Pair ${this} - \n     ${that}")
     run pair@{
@@ -59,16 +62,16 @@ private infix fun String.precedes(
                 secondCode.add(index + 1, ']')
                 secondCode.add(index, '[')
                 println(
-                    "\t\tNow comparing ${firstCode.joinToString("")} - \n" +
-                            "\t\t              ${secondCode.joinToString("")}"
+                    "\t\tNow comparing ${firstCode.toStringFormat()} - \n" +
+                            "\t\t              ${secondCode.toStringFormat()}"
                 )
             } else if (firstCode[index].isElevenBasedDigit() && secondCode[index] == '[') {
                 println("Right one starts an array, creating array in the left one")
                 firstCode.add(index + 1, ']')
                 firstCode.add(index, '[')
                 println(
-                    "\t\tNow comparing ${firstCode.joinToString("")} - \n" +
-                            "\t\t              ${secondCode.joinToString("")}"
+                    "\t\tNow comparing ${firstCode.toStringFormat()} - \n" +
+                            "\t\t              ${secondCode.toStringFormat()}"
                 )
             } else if (firstCode[index] == ']' && secondCode[index] != ']') {
                 println("Left one closes an array, sequence is correct")
