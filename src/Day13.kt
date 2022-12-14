@@ -5,7 +5,7 @@ fun main() {
         val pairs = input.parse()
         val indexes = mutableListOf<Int>()
         pairs.forEachIndexed { pairIndex, pair ->
-            if (comparePair(pair)) indexes.add(pairIndex)
+            if (pair.first precedes pair.second) indexes.add(pairIndex)
         }
 
         return indexes.sumOf { it+1 }
@@ -15,7 +15,7 @@ fun main() {
         val parsed = input.filter { it.isNotEmpty() }.toMutableList()
         parsed.add("[[2]]")
         parsed.add("[[6]]")
-        val sorted = parsed.sortedWith { o1, o2 -> if (comparePair(o1 to o2)) -1 else 1 }
+        val sorted = parsed.sortedWith { o1, o2 -> if (o1 precedes o2) -1 else 1 }
         println("Sorted list is ${sorted.joinToString("\n")}")
         return (sorted.indexOf("[[2]]")+1) * (sorted.indexOf("[[6]]")+1)
     }
@@ -40,14 +40,14 @@ private fun List<String>.parse(): List<Pair<String, String>> {
 
 private fun Char.isElevenBasedDigit() = this-'0' in 0..10
 
-fun comparePair(
-    pair: Pair<String, String>
+private infix fun String.precedes(
+    that: String
 ): Boolean {
     var result = false
-    println("Pair ${pair.first} - \n     ${pair.second}")
+    println("Pair ${this} - \n     ${that}")
     run pair@{
-        val firstCode = mutableListOf<Char>().apply { addAll(pair.first.replace("10",":").toList()) }
-        val secondCode = mutableListOf<Char>().apply { addAll(pair.second.replace("10",":").toList()) }
+        val firstCode = mutableListOf<Char>().also { it.addAll(this.replace("10",":").toList()) }
+        val secondCode = mutableListOf<Char>().also { it.addAll(that.replace("10",":").toList()) }
         (0 until max(firstCode.size, secondCode.size)).forEach { index ->
             print("\tPosition $index: ${firstCode[index]}-${secondCode[index]}:")
             if (firstCode[index] == '[' && secondCode[index] == '[') {
