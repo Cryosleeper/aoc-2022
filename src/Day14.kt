@@ -24,17 +24,33 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        TODO()
+        val parsedInput = input.parseToStone().map { it.points }
+        val stones = parsedInput.flatten().toSet()
+        val maxDepth = stones.maxByOrNull { it.y }!!.y
+        println("Cave is $stones with max depth of $maxDepth")
+        val sand = mutableSetOf<Point>()
+        var activeSand = Point(500, 0)
+        run sand@{
+            while (sand.contains(Point(500, 0)).not()) {
+                while (activeSand.canFall(stones + sand, maxDepth+2)) {
+                    activeSand.fall(stones + sand, maxDepth+2)
+                }
+                println("Sand stopped at $activeSand")
+                sand.add(activeSand)
+                activeSand = Point(500, 0)
+            }
+        }
+        return sand.size
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day14_test")
     check(part1(testInput) == 24)
-    //check(part2(testInput) == 0)
+    check(part2(testInput) == 93)
 
     val input = readInput("Day14")
-    println(part1(input))
-    //println(part2(input))
+    //println(part1(input))
+    println(part2(input))
 }
 
 private fun List<String>.parseToStone(): List<Stone> {
@@ -69,12 +85,14 @@ private data class Point(var x: Int, var y: Int) {
         return "($x,$y)"
     }
 
-    fun canFall(objects: Set<Point>): Boolean {
-        return objects.contains(Point(x, y+1)).not() || objects.contains(Point(x-1, y+1)).not() || objects.contains(Point(x+1, y+1)).not()
+    fun canFall(objects: Set<Point>, limit: Int = Int.MAX_VALUE): Boolean {
+        return (limit > y+1) && (objects.contains(Point(x, y+1)).not() || objects.contains(Point(x-1, y+1)).not() || objects.contains(Point(x+1, y+1)).not())
     }
 
-    fun fall(objects: Set<Point>): Boolean {
-        if (objects.contains(Point(x, y+1)).not()) {
+    fun fall(objects: Set<Point>, limit: Int = Int.MAX_VALUE): Boolean {
+        if (y+1 == limit) {
+            return false
+        } else if (objects.contains(Point(x, y+1)).not()) {
             y += 1
             return true
         } else if (objects.contains(Point(x-1, y+1)).not()) {
