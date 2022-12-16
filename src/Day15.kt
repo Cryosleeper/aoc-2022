@@ -20,18 +20,42 @@ fun main() {
         return pointsToIgnore.size
     }
 
-    fun part2(input: List<String>): Int {
-        TODO()
+    fun part2(input: List<String>, coordinateLimit: Int): Long {
+        val sensors = input.parseToSensors()
+        lateinit var result: Beacon
+        run search@ {
+            sensors.forEach {
+                (-it.distance-1..it.distance+1).forEach {dx ->
+                    listOf(it.distance - abs(dx) + 1, it.distance + abs(dx) - 1).forEach {dy ->
+                        val x = it.x + dx
+                        val y = it.y + dy
+                        if (x in 0..coordinateLimit && y in 0..coordinateLimit) {
+                            println("Checking $x, $y")
+                            if (sensors.none { sensorToCheck ->
+                                    sensorToCheck.distanceTo(
+                                        x,
+                                        y
+                                    ) <= sensorToCheck.distance
+                                }) {
+                                result = Beacon(x, y)
+                                return@search
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result.x * 4000000L + result.y
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day15_test")
     check(part1(testInput, 10) == 26)
-    //check(part2(testInput) == 0)
+    check(part2(testInput, 20) == 56000011L)
 
     val input = readInput("Day15")
-    println(part1(input, 2000000))
-    //println(part2(input))
+    //println(part1(input, 2000000))
+    println(part2(input, 4000000))
 }
 
 private fun List<String>.parseToSensors(): List<Sensor> {
@@ -50,5 +74,6 @@ private fun List<String>.parseToSensors(): List<Sensor> {
 private data class Beacon(val x: Int, val y: Int)
 private data class Sensor(val x: Int, val y: Int, val beacon: Beacon) {
     val distance: Int by lazy { distanceTo(beacon.x, beacon.y) }
+    
     fun distanceTo(x: Int, y: Int) = abs(this.x - x) + abs(this.y - y)
 }
